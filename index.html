@@ -1,21 +1,319 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Video Downloader</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Video Downloader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #E1306C;
+            --secondary: #F56040;
+            --dark: #121212;
+            --light: #f8f9fa;
+            --gray: #8e8e8e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .logo {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        h1 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .description {
+            color: var(--gray);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.1);
+        }
+        
+        button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(225, 48, 108, 0.3);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .features {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .thumbnail {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            max-height: 300px;
+            object-fit: cover;
+        }
+        
+        .download-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .download-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .download-option:hover {
+            background: #e0e0e0;
+        }
+        
+        .error {
+            color: #E1306C;
+            padding: 15px;
+            background: #ffebee;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Video Downloader</h1>
-    <input type="text" id="urlInput" placeholder="Paste video link here" />
-    <div class="icons">
-      <img src="yt.png" onclick="download('youtube')" alt="YouTube">
-      <img src="insta.png" onclick="download('instagram')" alt="Instagram">
-      <img src="fb.png" onclick="download('facebook')" alt="Facebook">
+    <div class="container">
+        <div class="logo">
+            <i class="fab fa-instagram"></i>
+        </div>
+        <h1>Instagram Downloader</h1>
+        <p class="description">Download videos, reels, and IGTV from Instagram in high quality</p>
+        
+        <div class="input-group">
+            <i class="fas fa-link"></i>
+            <input type="text" id="videoUrl" placeholder="Paste Instagram URL here...">
+        </div>
+        
+        <button id="downloadBtn">
+            <i class="fas fa-download"></i>
+            Download Now
+        </button>
+        
+        <div class="result" id="resultContainer">
+            <!-- Results will be displayed here -->
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-check-circle"></i>
+                <span>No watermark</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <span>Fast download</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-lock"></i>
+                <span>Private safe</span>
+            </div>
+        </div>
     </div>
-  </div>
-  <script src="script.js"></script>
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', async function() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const button = document.getElementById('downloadBtn');
+            const resultContainer = document.getElementById('resultContainer');
+            
+            if (!url) {
+                showError('Please enter an Instagram URL');
+                return;
+            }
+            
+            if (!url.includes('instagram.com')) {
+                showError('Please enter a valid Instagram URL');
+                return;
+            }
+            
+            try {
+                // Disable button during processing
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                // Clear previous results
+                resultContainer.style.display = 'none';
+                resultContainer.innerHTML = '';
+                
+                // Use bhawanigarg.com API
+                const apiUrl = `https://api.bhawanigarg.com/social/instagram/?url=${encodeURIComponent(url)}`;
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Display results
+                resultContainer.style.display = 'block';
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                if (data.video_url) {
+                    // For video posts
+                    resultContainer.innerHTML = `
+                        <video controls class="thumbnail">
+                            <source src="${data.video_url}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="download-options">
+                            <a href="${data.video_url}" class="download-option" download>
+                                <span>Download Video</span>
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    `;
+                } else if (data.image_url) {
+                    // For image posts
+                    resultContainer.innerHTML = `
+                        <img src="${data.image_url}" class="thumbnail" alt="Instagram media">
+                        <div class="download-options">
+                            <a href="${data.image_url}" class="download-option" download>
+                                <span>Download Image</span>
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    throw new Error('No media found in response');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message);
+            } finally {
+                // Re-enable button
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-download"></i> Download Now';
+            }
+        });
+        
+        function showError(message) {
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.style.display = 'block';
+            resultContainer.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-circle"></i> ${message}
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
